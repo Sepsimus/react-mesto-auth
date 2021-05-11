@@ -1,4 +1,5 @@
 import React from 'react';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import Footer from './Footer';
 import Header from './Header';
 import ImagePopup from './ImagePopup';
@@ -9,9 +10,11 @@ import {CurrentUserContext} from '../contexts/CurrentUserContext';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
+import ProtectedRoute from './ProtectedRoute';
 
 function App() {
 
+  const [loggedIn, setLoggedIn] = React.useState(false);
   const[currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
 
@@ -116,15 +119,35 @@ function App() {
       <div className="page">
         <Header />
 
-        <Main 
-        onEditAvatar={handleEditAvatarClick}
-        onEditProfile={handleEditProfileClick}
-        onAddPlace={handleAddPlaceClick}
-        onCardClick={handleCardClick}
-        onDeleteCardClick={handleDeleteCardClick}
-        cards={cards}
-        onCardLike={handleCardLike}
-        onCardDelete={handleCardDelete}/>
+        <Switch>
+            <ProtectedRoute 
+            path="/main"
+            loggedIn={loggedIn}
+            onEditAvatar={handleEditAvatarClick}
+            onEditProfile={handleEditProfileClick}
+            onAddPlace={handleAddPlaceClick}
+            onCardClick={handleCardClick}
+            onDeleteCardClick={handleDeleteCardClick}
+            cards={cards}
+            onCardLike={handleCardLike}
+            onCardDelete={handleCardDelete}
+            component={Main}/>
+            
+          <Route path="/sign-up">
+            {//<Sign-up />
+}
+          </Route>
+
+          <Route path="/sign-in">
+  {//          <Sign-in />
+}
+          </Route>
+
+          <Route exact path="/">
+            {loggedIn ? <Redirect to="/main" /> : <Redirect to="sign-in" />}
+          </Route>
+
+        </Switch>
         <Footer />
 
         <ImagePopup
