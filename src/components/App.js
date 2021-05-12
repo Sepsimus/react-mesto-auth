@@ -11,6 +11,9 @@ import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
 import AddPlacePopup from './AddPlacePopup';
 import ProtectedRoute from './ProtectedRoute';
+import Login from './Login';
+import Register from './Register';
+import InfoTooltip from './InfoTooltip';
 
 function App() {
 
@@ -117,8 +120,6 @@ function App() {
     <CurrentUserContext.Provider value = {currentUser}>
     <div className="substrate">
       <div className="page">
-        <Header />
-
         <Switch>
             <ProtectedRoute 
             path="/main"
@@ -131,16 +132,24 @@ function App() {
             cards={cards}
             onCardLike={handleCardLike}
             onCardDelete={handleCardDelete}
-            component={Main}/>
+            component={Main}>
+              <Header />
+            </ProtectedRoute>
             
           <Route path="/sign-up">
-            {//<Sign-up />
-}
+           <Header 
+           linkName="Войти"
+           linkPath="/sign-in"/>
+            <Register />
+            {//<InfoTooltip />
+            }
           </Route>
 
           <Route path="/sign-in">
-  {//          <Sign-in />
-}
+            <Header 
+           linkName="Регистрация"
+           linkPath="/sign-up"/>
+            <Login />
           </Route>
 
           <Route exact path="/">

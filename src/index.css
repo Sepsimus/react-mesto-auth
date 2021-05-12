@@ -10,6 +10,7 @@ body{
 
 @import url(./blocks/header/header.css);
 @import url(./blocks/header/__logo/header__logo.css);
+@import url(./blocks/header/__link/header__link.css);
 
 @import url(./blocks/avatar/avatar.css);
 
@@ -51,5 +52,17 @@ body{
 @import url(./blocks/popup/__input/_type/popup__input_type_error.css);
 @import url(./blocks/popup/__input-error/_active/popup__input-error_active.css);
 @import url(./blocks/popup/__save/_inactive/popup__save_inactive.css);
+@import url(./blocks/popup/__register-img/popup__register-img.css);
+@import url(./blocks/popup/__register-title/popup__register-title.css);
 
 @import url(./blocks/popup/_opened/popup_opened.css);
+
+@import url(./blocks/form/form.css);
+@import url(./blocks/form/__container/form__container.css);
+@import url(./blocks/form/__container/_register/form__container_register.css);
+@import url(./blocks/form/__container/_login/form__container_login.css);
+@import url(./blocks/form/__title/form__title.css);
+@import url(./blocks/form/__input/form__input.css);
+@import url(./blocks/form/__enter/form__enter.css);
+@import url(./blocks/form/__already-registered/form__already-registered.css);
+@import url(./blocks/form/__already-registered/_type/form__already-registered_type_button.css);
