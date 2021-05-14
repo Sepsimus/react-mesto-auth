@@ -1,12 +1,19 @@
 import React from 'react';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import Card from './Card';
+import Header from './Header';
 
 function Main(props){
 
     const userInfo = React.useContext(CurrentUserContext); 
 
     return(
+      <>
+      <Header 
+      loggedIn={props.loggedIn}
+      signOut={props.signOut}
+      buttonName="Выйти"
+      headerUserEmail={props.headerUserEmail}/>
         <main className="content">
           <section className="profile">
             <div className="profile__content">
@@ -38,6 +45,7 @@ function Main(props){
               )}
           </section>
         </main>
+      </>
     )
 }
 

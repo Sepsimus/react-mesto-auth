@@ -15,3 +15,13 @@
     opacity: 0.85;
     cursor: pointer;
 }
+
+@media screen and (max-width: 767px){
+    .form__enter{
+        width: 260px;
+        height: 46px;
+        font-size: 16px;
+        line-height: 19px;
+        margin-top: 173px;
+    }
+}

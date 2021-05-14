@@ -1,5 +1,5 @@
-import React from 'react';
-import { Route, Switch, Redirect } from 'react-router-dom';
+import React from 'react'; 
+import { Route, Switch, Redirect, useHistory } from 'react-router-dom';
 import Footer from './Footer';
 import Header from './Header';
 import ImagePopup from './ImagePopup';
@@ -14,12 +14,20 @@ import ProtectedRoute from './ProtectedRoute';
 import Login from './Login';
 import Register from './Register';
 import InfoTooltip from './InfoTooltip';
+import authApi from '../utils/authApi';
 
 function App() {
 
+  const history = useHistory(); 
+
   const [loggedIn, setLoggedIn] = React.useState(false);
-  const[currentUser, setCurrentUser] = React.useState({});
+  function handleLogin(){
+    setLoggedIn(true);
+  } 
+
+  const [currentUser, setCurrentUser] = React.useState({});
   const [cards, setCards] = React.useState([]);
+  const [userEmail, setUserEmail] = React.useState('');
 
   function handleCardLike(card){
     const isLiked = card.likes.some(user => user._id === currentUser._id);
@@ -50,6 +58,22 @@ function App() {
     })
   }, []);
 
+  
+  React.useEffect(() => {
+    const jwt = localStorage.getItem('jwt');
+    authApi.tokenCheck(jwt)
+    .then((tokenData) => {
+      if(tokenData){
+        setUserEmail(tokenData.data.email);
+        handleLogin();
+        history.push('/main');
+      }
+    })
+    .catch((err) => {
+      console.log(`Ошибка:${err}. Запрос не выполнен`);
+    })
+  });
+
   const [selectedCard, setSelectedCard] = React.useState(null);
   function handleCardClick(cardData){
     setSelectedCard(cardData);
@@ -75,11 +99,17 @@ function App() {
     setIsDeleteConfirmPopupOpen(true);
   }
 
+  const[isRegisterPopupOpen, setIsRegisterPopupOpen] = React.useState(false);
+  function handleRegisterCardClick(){
+    setIsRegisterPopupOpen(true);
+  }
+
   function closeAllPopups(){
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setIsDeleteConfirmPopupOpen(false);
+    setIsRegisterPopupOpen(false);
     setSelectedCard(null);
   };
 
@@ -116,12 +146,45 @@ function App() {
     })
   }
 
+  const [successfulyRegistered, setSuccessfulyRegistered] = React.useState(false);
+
+  function registerNewUser(registerInfo){
+    authApi.registration(JSON.stringify(registerInfo))
+    .then((registerData) => {
+      setSuccessfulyRegistered(true);
+    })
+    .catch((err) => {
+      setSuccessfulyRegistered(false);
+      console.log(`Ошибка:${err}. Запрос не выполнен`);
+    })
+  }
+
+  function authorizationUser(authorizationInfo){
+    authApi.authorization(JSON.stringify(authorizationInfo))
+    .then((authorizationData) => {
+      localStorage.setItem('jwt', authorizationData.token);
+      handleLogin();
+      history.push('/main');
+    })
+    .catch((err) => {
+      console.log(`Ошибка:${err}. Запрос не выполнен`);
+    })
+  }
+  
+  function signOut(){
+    localStorage.removeItem('jwt');
+    history.push('/sign-in');
+    setLoggedIn(false);
+}
+
   return (
     <CurrentUserContext.Provider value = {currentUser}>
     <div className="substrate">
       <div className="page">
         <Switch>
             <ProtectedRoute 
+            signOut={signOut}
+            headerUserEmail={userEmail}
             path="/main"
             loggedIn={loggedIn}
             onEditAvatar={handleEditAvatarClick}
@@ -133,23 +196,29 @@ function App() {
             onCardLike={handleCardLike}
             onCardDelete={handleCardDelete}
             component={Main}>
-              <Header />
             </ProtectedRoute>
             
           <Route path="/sign-up">
            <Header 
            linkName="Войти"
            linkPath="/sign-in"/>
-            <Register />
-            {//<InfoTooltip />
-            }
+            <Register 
+              onRegisterUser={registerNewUser}
+              onPopupNotification={handleRegisterCardClick}/>
+            <InfoTooltip 
+              name="registerNotification"
+              isOpen={isRegisterPopupOpen}
+              onClose={closeAllPopups}
+              successfulyRegistered={successfulyRegistered}/>
           </Route>
 
           <Route path="/sign-in">
             <Header 
            linkName="Регистрация"
            linkPath="/sign-up"/>
-            <Login />
+            <Login 
+            onAuthorizationUser={authorizationUser}
+            handleLogin={handleLogin}/>
           </Route>
 
           <Route exact path="/">
