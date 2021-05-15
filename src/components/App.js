@@ -36,7 +36,10 @@ function App() {
       setCards((state) => 
       state.map(
         (c) => c._id === card._id ? newCard : c)
-      );
+      )
+      .catch((err) => {
+        console.log(`Ошибка:${err}. Запрос не выполнен`);
+    })
   });
   } 
 
@@ -44,6 +47,9 @@ function App() {
   api.deleteCard(card._id)
   .then(() => {
     setCards((cards.filter(item => item._id !== card._id)))
+  })
+  .catch((err) => {
+    console.log(`Ошибка:${err}. Запрос не выполнен`);
   })
   }
 
@@ -61,18 +67,20 @@ function App() {
   
   React.useEffect(() => {
     const jwt = localStorage.getItem('jwt');
-    authApi.tokenCheck(jwt)
-    .then((tokenData) => {
-      if(tokenData){
-        setUserEmail(tokenData.data.email);
-        handleLogin();
-        history.push('/main');
-      }
-    })
-    .catch((err) => {
-      console.log(`Ошибка:${err}. Запрос не выполнен`);
-    })
-  });
+    if(jwt){
+      authApi.tokenCheck(jwt)
+      .then((tokenData) => {
+        if(tokenData){
+          setUserEmail(tokenData.data.email);
+          handleLogin();
+          history.push('/main');
+        }
+      })
+      .catch((err) => {
+        console.log(`Ошибка:${err}. Запрос не выполнен`);
+      })
+    }
+  }, []);
 
   const [selectedCard, setSelectedCard] = React.useState(null);
   function handleCardClick(cardData){
@@ -100,9 +108,6 @@ function App() {
   }
 
   const[isRegisterPopupOpen, setIsRegisterPopupOpen] = React.useState(false);
-  function handleRegisterCardClick(){
-    setIsRegisterPopupOpen(true);
-  }
 
   function closeAllPopups(){
     setIsEditAvatarPopupOpen(false);
@@ -152,9 +157,11 @@ function App() {
     authApi.registration(JSON.stringify(registerInfo))
     .then((registerData) => {
       setSuccessfulyRegistered(true);
+      setIsRegisterPopupOpen(true);
     })
     .catch((err) => {
       setSuccessfulyRegistered(false);
+      setIsRegisterPopupOpen(true);
       console.log(`Ошибка:${err}. Запрос не выполнен`);
     })
   }
@@ -163,6 +170,7 @@ function App() {
     authApi.authorization(JSON.stringify(authorizationInfo))
     .then((authorizationData) => {
       localStorage.setItem('jwt', authorizationData.token);
+      setUserEmail(authorizationInfo.email);
       handleLogin();
       history.push('/main');
     })
@@ -203,8 +211,7 @@ function App() {
            linkName="Войти"
            linkPath="/sign-in"/>
             <Register 
-              onRegisterUser={registerNewUser}
-              onPopupNotification={handleRegisterCardClick}/>
+              onRegisterUser={registerNewUser}/>
             <InfoTooltip 
               name="registerNotification"
               isOpen={isRegisterPopupOpen}

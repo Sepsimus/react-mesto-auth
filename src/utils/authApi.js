@@ -34,12 +34,12 @@ class AuthApi{
         .then(this._checkResponse);
     }
 
-    tokenCheck(getInquiry){
+    tokenCheck(token){
         return fetch(`${this._baseUrl}/users/me`, {
             method: 'GET',
             headers:{
                 "Content-Type": "application/json",
-                "Authorization" : `Bearer ${getInquiry}`
+                "Authorization" : `Bearer ${token}`
             }
         }
     )

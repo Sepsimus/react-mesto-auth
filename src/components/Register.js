@@ -30,7 +30,7 @@ function Register (props) {
             <span className="email-input-error email__input-error" />
             <input id="password-input" className="form__input form__input_password" onChange={handlePasswordChange} placeholder="Пароль" name="password" type="password" minLength="2" maxLength="200" required />
             <span className="password-input-error form__input-error" />
-            <button className="form__enter" type="submit" onClick={props.onPopupNotification}>Зарегистрироваться</button>
+            <button className="form__enter" type="submit">Зарегистрироваться</button>
             <p className="form__already-registered">Уже зарегистрированы?&nbsp;
              <Link to="/sign-in" className="form__already-registered form__already-registered_type_button">
                  Войти
