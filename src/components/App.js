@@ -37,10 +37,10 @@ function App() {
       state.map(
         (c) => c._id === card._id ? newCard : c)
       )
-      .catch((err) => {
-        console.log(`Ошибка:${err}. Запрос не выполнен`);
-    })
-  });
+  })
+    .catch((err) => {
+      console.log(`Ошибка:${err}. Запрос не выполнен`);
+    });
   } 
 
   function handleCardDelete(card){
